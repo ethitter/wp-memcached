@@ -156,6 +156,10 @@ class WP_Object_Cache {
 		$result = $mc->add( $key, $data, false, $expire );
 
 		if ( false !== $result ) {
+			if ( ! isset( $this->stats['add'] ) ) {
+				$this->stats['add'] = 0;
+			}
+
 			++$this->stats['add'];
 
 			$this->group_ops[ $group ][] = "add $id";
@@ -227,6 +231,10 @@ class WP_Object_Cache {
 
 		$result = $mc->delete( $key );
 
+		if ( ! isset( $this->stats['delete'] ) ) {
+			$this->stats['delete'] = 0;
+		}
+
 		++$this->stats['delete'];
 
 		$this->group_ops[ $group ][] = "delete $id";
@@ -287,6 +295,10 @@ class WP_Object_Cache {
 			$this->cache[ $key ] = $value;
 		}
 
+		if ( ! isset( $this->stats['get'] ) ) {
+			$this->stats['get'] = 0;
+		}
+
 		++$this->stats['get'];
 
 		$this->group_ops[ $group ][] = "get $id";
@@ -334,6 +346,10 @@ class WP_Object_Cache {
 
 				$return = array_merge( $return, $vals );
 			}
+		}
+
+		if ( ! isset( $this->stats['get_multi'] ) ) {
+			$this->stats['get_multi'] = 0;
 		}
 
 		++$this->stats['get_multi'];
@@ -439,6 +455,10 @@ class WP_Object_Cache {
 
 		$mc     =& $this->get_mc( $group );
 		$result = $mc->set( $key, $data, false, $expire );
+
+		if ( ! isset( $this->stats['set'] ) ) {
+			$this->stats['set'] = 0;
+		}
 
 		++$this->stats[ 'set' ];
 		$this->group_ops[$group][] = "set $id";
@@ -588,6 +608,14 @@ class WP_Object_Cache {
 		}
 
 		$this->salt_keys( WP_CACHE_KEY_SALT );
+
+		if ( ! isset( $this->stats['get'] ) ) {
+			$this->stats['get'] = 0;
+		}
+
+		if ( ! isset( $this->stats['set'] ) ) {
+			$this->stats['set'] = 0;
+		}
 
 		$this->cache_hits   =& $this->stats['get'];
 		$this->cache_misses =& $this->stats['add'];
